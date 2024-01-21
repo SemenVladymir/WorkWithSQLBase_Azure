@@ -1,3 +1,4 @@
+using ConnetcSQLBase_Azure.Connection;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using System;
@@ -5,6 +6,9 @@ using System;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<ConnectionToSQLBaseAzure>(
+    options => options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -15,6 +19,8 @@ builder.Services.AddControllers().AddNewtonsoftJson(options => options.Serialize
     AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
 
 var app = builder.Build();
+
+app.UseCors(c => c.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
